@@ -16,16 +16,33 @@ jobs:
         run: |
           npm install  # 安装依赖
           npm run build
-      - name: Deploy 🚀
-        uses: cross-the-world/ssh-scp-ssh-pipelines@latest # 因为构建之后，需要把代码上传到服务器上，所以需要连接到ssh，并且做一个安全拷贝(security copy)操作
+#       - name: Deploy 🚀
+#         uses: cross-the-world/ssh-scp-ssh-pipelines@latest # 因为构建之后，需要把代码上传到服务器上，所以需要连接到ssh，并且做一个安全拷贝(security copy)操作
+#         env:
+#           WELCOME: "ssh scp ssh pipelines"
+#           LASTSSH: "Doing something after copying"
+#         with:
+#          host: ${{ secrets.USER_HOST }}
+#          user: ${{ secrets.USER_NAME }}
+#          pass: ${{ secrets.USER_PASS }}
+#          connect_timeout: 10s
+#          local: './dist/*'
+#          remote: /home/ubuntu/OnlineTest/dist
+
+      # 上传阿里云
+      - name: 发布到腾讯云
+        uses: easingthemes/ssh-deploy@v2.1.1
         env:
-          WELCOME: "ssh scp ssh pipelines"
-          LASTSSH: "Doing something after copying"
-        with:
-         host: ${{ secrets.USER_HOST }}
-         user: ${{ secrets.USER_NAME }}
-         pass: ${{ secrets.USER_PASS }}
-         connect_timeout: 10s
-         local: './dist/*'
-         remote: /home/ubuntu/OnlineTest/dist
+            # 私钥
+            SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+            # scp参数
+            ARGS: '-avzr --delete'
+            # 源目录
+            SOURCE: 'dist'
+            # 服务器ip：换成你的服务器IP
+            REMOTE_HOST: ${{ secrets.USER_HOST }}
+            # 用户
+            REMOTE_USER: 'secrets.USER_NAME'
+            # 目标地址
+            TARGET: '/www/wwwroot'
            
