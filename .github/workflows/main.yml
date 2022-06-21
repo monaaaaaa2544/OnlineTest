@@ -44,5 +44,5 @@ jobs:
             # 用户
             REMOTE_USER: 'secrets.USER_NAME'
             # 目标地址
-            TARGET: '/www/wwwroot'
+            TARGET: '/home/ubuntu/OnlineTest/dist'
            
