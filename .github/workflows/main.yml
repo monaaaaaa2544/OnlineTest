@@ -22,9 +22,9 @@ jobs:
           WELCOME: "ssh scp ssh pipelines"
           LASTSSH: "Doing something after copying"
         with:
-         host: ${{ 1.13.13.120 }}
-         user: ${{ ubuntu }}
-         pass: ${{ xinyuan123!! }}
+         host: ${{ secrets.USER_HOST }}
+         user: ${{ secrets.USER_NAME }}
+         pass: ${{ secrets.USER_PASS }}
          connect_timeout: 10s
          local: './dist/*'
          remote: /home/ubuntu/OnlineTest/dist
