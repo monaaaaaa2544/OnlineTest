@@ -18,7 +18,6 @@ import subject from "@/router/subject";
 import records from "@/router/records";
 
 
-
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -35,10 +34,11 @@ const router = new VueRouter({
           path: "main",
           component: Main,
           children: [
-            {path: 'face-detect',name:'FaceDetect',component: ()=>import('@/views/Main/components/FaceDetect')},
-            {path: 'login',name:'Login',component: ()=>import('@/views/Main/components/Login')},
-            {path: 'register',name:'Register',component: ()=>import('@/views/Main/components/Register')},
-            {path: 'update-face',name:'UpdateFace',component: ()=>import('@/views/Main/components/UpdateFace')},
+            // 路由懒加载
+            { path: 'face-detect', name: 'FaceDetect', component: () => import('@/views/Main/components/FaceDetect') },
+            { path: 'login', name: 'Login', component: () => import('@/views/Main/components/Login') },
+            { path: 'register', name: 'Register', component: () => import('@/views/Main/components/Register') },
+            { path: 'update-face', name: 'UpdateFace', component: () => import('@/views/Main/components/UpdateFace') },
           ],
         },
       ],
@@ -50,13 +50,13 @@ const router = new VueRouter({
       redirect: "/layout/home",
       children: [
         //管理员主页
-        {path: "home", name: "Home", component: () => import("@/views/Admin/Context/Home/Home")},
+        { path: "home", name: "Home", component: () => import("@/views/Admin/Context/Home/Home") },
         // 管理员个人信息
-        {path: "profile", name: "Profile", component: () => import("@/views/Admin/Context/Profile/Profile"),},
+        { path: "profile", name: "Profile", component: () => import("@/views/Admin/Context/Profile/Profile"), },
         //用户管理-->学生列表
-        {path: "student", name: "Student", component: () => import("@/views/Admin/Context/ManageUser/Student"),},
+        { path: "student", name: "Student", component: () => import("@/views/Admin/Context/ManageUser/Student"), },
         //用户管理-->管理员列表
-        {path: "admin", name: "Admin", component: () => import("@/views/Admin/Context/ManageUser/Admin"),},
+        { path: "admin", name: "Admin", component: () => import("@/views/Admin/Context/ManageUser/Admin"), },
         ...question,
         ...paper,
         ...result,
@@ -71,18 +71,18 @@ const router = new VueRouter({
       redirect: "/student-layout/home",
       children: [
         //考试中心
-        {path: "exam-list", name: "ExamList", component: () => import("@/views/Student/Exam/ExamList"),},
+        { path: "exam-list", name: "ExamList", component: () => import("@/views/Student/Exam/ExamList"), },
         //考生主页
-        {path: "home", name: "stuHome", component: () => import("@/views/Student/Home/Home"),},
+        { path: "home", name: "stuHome", component: () => import("@/views/Student/Home/Home"), },
         //个人中心
-        {path: "profile", name: "stuProfile", component: () => import("@/views/Student/Profile/Profile"),},
-          records[0],
+        { path: "profile", name: "stuProfile", component: () => import("@/views/Student/Profile/Profile"), },
+        records[0],
         ...stuResult
       ],
     },
     //答题页面
-    {path: "/exam-paper/do/:id", name: "DoExam", component: () => import("@/views/Student/Exam/DoExam"),},
-      // 查看答题卡
+    { path: "/exam-paper/do/:id", name: "DoExam", component: () => import("@/views/Student/Exam/DoExam"), },
+    // 查看答题卡
     records[2],
   ],
 });
@@ -120,12 +120,12 @@ router.beforeEach((to, from, next) => {
 let getUserInfo = (userId) => {
   return api.SelUser({ user_id: userId }).then((res) => {
     console.log(res);
-    store.commit("updateUser",{
-      id:res.data.id,
-      user_id:res.data.userId,
-      password:res.data.password,
-      user_type:res.data.userType,
-      reg_time:res.data.regTime,
+    store.commit("updateUser", {
+      id: res.data.id,
+      user_id: res.data.userId,
+      password: res.data.password,
+      user_type: res.data.userType,
+      reg_time: res.data.regTime,
     }); //用户信息 存进vuex
   });
 };
