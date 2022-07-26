@@ -7,41 +7,67 @@ import VueParticles from "vue-particles";
 Vue.use(VueParticles);
 ```
 
-## axios 的 api 管理
+## axios 的配置
 
 参考网站：https://juejin.im/post/5b55c118f265da0f6f1aa354
 
-重写 axios 的 get、post 方法（http.js），并且封装所有需要调用的 api（api.js）
+重新封装axios，不用每一次都设置超时时间、设置请求头、根据项目环境判断使用哪个请求地址、错误处理等等操作。
+axios统一配置在http.js中：
+```javascript
+import axios from "axios";
+axios.defaults.baseURL = "";
+axios.defaults.timeout = 10000;
+axios.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded;charset=UTF-8";
 
+const ishttps = 'https:' == document.location.protocol ? true : false
+const instance = axios.create({
+  baseURL: ishttps ? process.env.VUE_APP_API_BASEURL_HTTPS : process.env.VUE_APP_API_BASEURL_HTTP,
+  timeout: 10000,
+  // withCredentials: true, // 跨域请求时发送Cookie
+})
+```
+
+
+
+重写 axios 的 get、post 方法（http.js），并且封装所有需要调用的 api到api.js中：
 ```javascript
 /**
  * 封装post方法
  * post方法，对应post请求
  * @param {String} url [请求的url地址]
- * @param {Object} params [请求时携带的参数]
+ * @param {Object} body [请求体]
  */
-export function post(url, params) {
+
+export function post(url, body) {
   return new Promise((resolve, reject) => {
-    axios
-      .post(url, QS.stringify(params))
-      .then(res => {
+    instance
+      .post(url, body)
+      .then((res) => {
         resolve(res.data);
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.data);
       });
   });
 }
 ```
 
-用 api.js 一个文件统一管理所有 api
-
+用 api.js 一个文件统一管理所有 api:
 ```javascript
-export const getApi = () =>
-  get(
-    "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=UwELvyWkz5Q9rFZx8uIc0Qi5&client_secret=GzHQM5nrA1dbaQFPnXkOoM6IYBNhtXZ3"
-  );
+export default {
+  verifyToken: (token) => {
+    return get("/verify-token", token);
+  }, //验证log_token
+// ......
+}
 ```
+
+
+
+
+
+
 
 ## 调用百度 api 时遇到跨域问题
 

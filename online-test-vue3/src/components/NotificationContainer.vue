@@ -1,3 +1,23 @@
+
+<script>
+import { mapState } from 'vuex'
+
+export default {
+    computed: {
+        ...mapState('notification', ['notifications', 'position'])
+    },
+    created() {
+        let i = 0
+        // setInterval(() => {
+        //     this.$message.success(
+        //         'hhh文件连接多个的撒高科技卡斯的离开干撒h' +
+        //             i++
+        //     )
+        // }, 400)
+    }
+}
+</script>
+
 <template>
     <section class="l-notifications">
         <transition-group name="l-notification">
@@ -22,24 +42,9 @@
     </section>
 </template>
 
-<script>
-import { mapState } from 'vuex'
 
-export default {
-    computed: {
-        ...mapState('notification', ['notifications', 'position'])
-    },
-    created() {
-        let i = 0
-        // setInterval(() => {
-        //     this.$message.success(
-        //         'hhh文件连接多个的撒高科技卡斯的离开干撒h' +
-        //             i++
-        //     )
-        // }, 400)
-    }
-}
-</script>
+
+
 <style lang="scss" scoped>
 .l-notifications {
     position: fixed;
