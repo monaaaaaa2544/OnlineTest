@@ -64,9 +64,57 @@ export default {
 ```
 
 
+测试请求拦截器、响应拦截器：
+```javascript
+// 请求拦截器
+instance.interceptors.request.use(function (config) {
+  console.log('hello lxy')
+  return config
+}, function (err) {
+  console.log('请求发生错误')
+  return Promise.reject(err)
+})
 
 
+// 响应拦截器
+instance.interceptors.response.use(function (config) {
+  console.log('hello cyy')
+  return config
+}, function (err) {
+  console.log('响应发生错误')
+  return Promise.reject(err)
+})
+```
 
+
+## 调用百度人脸识别API
+
+Vuex存放账户信息，以便于获取token
+```javascript
+
+export default new Vuex.Store({
+  modules: {
+    notification
+  },
+  state: {
+    baiduDB: {
+      grant_type: "client_credentials",
+      client_id: "xx"
+      client_secret: "xx";
+    },
+    access_token: "",
+// ...
+  },
+  mutations: {
+    updateAccessToken(state, value) {
+      state.access_token = value;
+    },
+// ...
+  },
+});
+
+
+```
 
 
 ## 调用百度 api 时遇到跨域问题
@@ -185,4 +233,15 @@ configureWebpack:config=>{
 // import UserDetails from './views/UserDetails'
 // 替换成
 const UserDetails = () => import('./views/UserDetails')
+```
+
+
+## 用 async await 改写Promise的链式调用写法
+
+```javascript
+ async created() {
+    // 获取access_token
+    let res=await this.$api.getToken(this.baiduDB)
+    this.$store.commit("updateAccessToken", res.access_token)
+  },
 ```

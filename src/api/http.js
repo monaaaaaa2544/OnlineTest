@@ -43,16 +43,17 @@ const instance = axios.create({
  */
 export function get(url, params) {
   return new Promise((resolve, reject) => {
-    instance
-      .get(url, {
-        params: params,
-      })
+
+    instance.get(url, {
+      params: params,
+    })
       .then((res) => {
         resolve(res.data);
       })
       .catch((err) => {
         reject(err.data);
       });
+
   });
 }
 
@@ -64,13 +65,15 @@ export function get(url, params) {
  */
 export function post(url, body) {
   return new Promise((resolve, reject) => {
-    instance
-      .post(url, body)
+
+    instance.post(url, body)
       .then((res) => {
         resolve(res.data);
       })
       .catch((err) => {
         reject(err.data);
       });
+
   });
 }
+

@@ -40,13 +40,14 @@ export default {
       }); //注册信息存进vuex
       this.RegInfo();//提交用户基本信息
     },
-    RegInfo() {
-      this.$api.postRegInfo({
+    async RegInfo() {
+      let res=await this.$api.postRegInfo({
         user_id:this.$store.state.user.user_id,
         password:this.$store.state.user.password,
         user_type:this.$store.state.user.user_type
-      }).then(res => {
-        switch (res.code) {
+      })
+
+      switch (res.code) {
           case 200:
             this.$message.success(`${res.msg}`); //用户基本信息提交成功！
             this.$router.push({path:'/main/face-detect', query:{ father: 'register'}});//跳转到人脸绑定页面
@@ -57,8 +58,7 @@ export default {
           default:
             this.$message.error(`未知错误！`);
             break;
-        }
-      });
+      }
     },
 
   }

@@ -11,12 +11,12 @@ export default new Vuex.Store({
   state: {
     baiduDB: {
       grant_type: "client_credentials",
-      client_id: "UwELvyWkz5Q9rFZx8uIc0Qi5",
-      client_secret: "GzHQM5nrA1dbaQFPnXkOoM6IYBNhtXZ3"
+      client_id: "DydoQdayGIbGGRzrQ6HyYVPG",
+      client_secret: "PGUCPcsHaz4AZa66TwwS4TNhfFnLbojT"
     },
     access_token: "",
     user: {
-      id:'',
+      id: '',
       user_id: "",
       password: "",
       user_type: "USER",
@@ -34,7 +34,7 @@ export default new Vuex.Store({
         state.user.password,
         state.user.user_type,
         state.user.reg_time
-      ] = [obj.id,obj.user_id, obj.password, obj.user_type, obj.reg_time];
+      ] = [obj.id, obj.user_id, obj.password, obj.user_type, obj.reg_time];
     }
   },
 });

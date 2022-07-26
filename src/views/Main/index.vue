@@ -33,11 +33,10 @@ export default {
       baiduDB: this.$store.state.baiduDB,
     };
   },
-  created() {
+  async created() {
     // 获取access_token
-    this.$api.getToken(this.baiduDB).then(res => {
-      this.$store.commit("updateAccessToken", res.access_token);
-    });
+    let res=await this.$api.getToken(this.baiduDB)
+    this.$store.commit("updateAccessToken", res.access_token)
   },
   methods: {
   }
