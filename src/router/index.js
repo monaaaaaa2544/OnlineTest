@@ -97,10 +97,10 @@ router.beforeEach((to, from, next) => {
     if (log_token !== null) {
       api.verifyToken(log_token).then((res) => {
         // token已过期
-        if (!res.valid) {
+        if (!res.valid && res.code === 302) {
           Message.error("你的身份验证已经过期，请重新登录");
-          next({ path: "/main" });
-        } else {
+          next({ path: "/main" });//重定向到登录页面
+        } else if (res.valid === true && res.code === 200) {
           // token有效
           getUserInfo(res.decoded.condition.user_id).then(() => {
             next();

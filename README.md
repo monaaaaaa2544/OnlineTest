@@ -225,7 +225,7 @@ configureWebpack:config=>{
 ```
 
 #### 路由懒加载
-组件都使用动态导入
+组件都使用动态导入,只有在解析给定的路由时，才会加载路由组件
 
 例如：
 ```javascript
@@ -236,6 +236,71 @@ const UserDetails = () => import('./views/UserDetails')
 ```
 
 
+#### UI框架按需加载
+
+  ```javascript
+  import { Button, Input, Pagination, Table, TableColumn, MessageBox } from 'element-ui';
+  Vue.use(Button)
+  Vue.use(Input)
+  Vue.use(Pagination)
+  ```
+
+
+
+
+
+#### Options缓存
+两次调用修改密码接口之前都会调用Option预检请求，导致会增加多余的http请求时间。
+[![vP6GWt.png](https://s1.ax1x.com/2022/07/29/vP6GWt.png)](https://imgtu.com/i/vP6GWt)
+
+这里使用缓存提升性能：
+**方法一：服务器端设置Access-Control-Max-Age字段**
+当第一次请求该URL时会发出OPTIONS请求，浏览器会根据返回的Access-Control-Max-Age字段缓存该请求的OPTIONS预检请求的响应结果。在缓存有效期内，该资源的请求（URL和header字段都相同的情况下）不会再触发预检。(chrome 打开控制台可以看到，当服务器响应Access-Control-Max-Age 时只有第一次请求会有预检，后面不会了。注意要开启缓存，去掉disable cache勾选)
+
+```javascript
+//后端设置请求头
+/*
+路径：/user/update-user  更新单个用户信息
+*/
+router.post("/update-user", async function (req, res) {
+    let affectCount = await Service.User.updateUser(
+        { userId: req.body.user_id },
+        req.body
+    );
+    let user = await Service.User.findUser({ userId: req.body.user_id });
+    res.json({
+        code: 200,
+        msg: "更新用户信息成功",
+        description: `更新了${affectCount}条记录`,
+        data: user,
+    });
+    res.setHeader('Access-Control-Max-Age', 86400)//设置Options缓存
+});
+
+```
+
+**方法二：非简单请求转换为简单请求**
+```javascript
+const instance = axios.create({
+  baseURL: ishttps ? process.env.VUE_APP_API_BASEURL_HTTPS : process.env.VUE_APP_API_BASEURL_HTTP,
+  timeout: 10000,
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }//非简单请求转换为简单请求
+  // withCredentials: true, // 跨域请求时携带Cookie
+})
+```
+**方法三：拦截器中设置请求头**
+```javascript
+// 请求拦截器
+// instance.interceptors.request.use(function (config) {
+//   console.log('请求拦截器')
+//   config.headers['Access-Control-Max-Age'] = 86400
+//   return config
+// }, function (err) {
+//   console.log('请求发生错误')
+//   return Promise.reject(err)
+// })
+```
+
 ## 用 async await 改写Promise的链式调用写法
 
 ```javascript
@@ -244,4 +309,37 @@ const UserDetails = () => import('./views/UserDetails')
     let res=await this.$api.getToken(this.baiduDB)
     this.$store.commit("updateAccessToken", res.access_token)
   },
+```
+
+
+## 验证用户是否登录，利用全局路由守卫
+```javascript
+// 全局路由守卫
+router.beforeEach((to, from, next) => {
+  // 验证token是否有效
+  if (to.path.match(/^\/layout/i) || to.path.match(/^\/student-layout/i)) {
+    let log_token = localStorage.getItem("log_token");
+    if (log_token !== null) {
+      api.verifyToken(log_token).then((res) => {
+        // token已过期
+        if (!res.valid && res.code===302) {
+          Message.error("你的身份验证已经过期，请重新登录");
+          next({ path: "/main" });//重定向到登录页面
+        } else if(res.valid===true && res.code===200){
+          // token有效
+          getUserInfo(res.decoded.condition.user_id).then(() => {
+            next();
+          });
+        }
+      });
+    } else {
+      // 没有token，进入登录页面
+      Message.error("你还未登录，请先登录");
+      next({ path: "/main" });
+    }
+  } else {
+    next();
+  }
+});
+
 ```

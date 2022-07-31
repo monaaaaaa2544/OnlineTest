@@ -12,12 +12,15 @@ const ishttps = 'https:' == document.location.protocol ? true : false
 const instance = axios.create({
   baseURL: ishttps ? process.env.VUE_APP_API_BASEURL_HTTPS : process.env.VUE_APP_API_BASEURL_HTTP,
   timeout: 10000,
-  // withCredentials: true, // 跨域请求时发送Cookie
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }//非简单请求转换为简单请求
+  // withCredentials: true, // 跨域请求时携带Cookie
 })
 
-// // 请求拦截器
+
+// 请求拦截器
 // instance.interceptors.request.use(function (config) {
-//   console.log('hello lxy')
+//   console.log('请求拦截器')
+//   config.headers['Access-Control-Max-Age'] = 86400
 //   return config
 // }, function (err) {
 //   console.log('请求发生错误')
